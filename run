@@ -1,10 +1,10 @@
 #!/bin/bash
 IMG=$(cat IMAGE)
 DOCKERHOME=$(pwd)/.dockerhome
-OPT=${OPT:-"--rm -it"}
+PACKAGE_ROOT=$(pwd)/packages
+OPT=${OPT:-""}
 docker run \
-    --init \
     -u $(id -u):$(id -g) -v $(pwd):$(pwd) -w $(pwd) \
     -e HOME=${DOCKERHOME} -v ${DOCKERHOME}:${DOCKERHOME} \
-    -e PYTHONPATH=$(pwd)/packages \
+    --rm --init -it -e PYTHONPATH=${PACKAGE_ROOT} \
     ${OPT} ${IMG} "$@"
