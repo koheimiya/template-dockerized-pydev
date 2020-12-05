@@ -5,11 +5,11 @@ DOCKERHOME=${CURDIR}/.dockerhome
 IMAGE=$$(cat IMAGE)
 PACKAGE_ROOT=packages
 RUN=docker run \
-    --rm --init -u $$(id -u):$$(id -g) -v $$(pwd):$$(pwd) -w $$(pwd) \
+    --rm --init -u $$(id -u):$$(id -g) -w $$(pwd) -v $$(pwd):$$(pwd):delegated \
     -e HOME=${DOCKERHOME} -v ${DOCKERHOME}:${DOCKERHOME} \
     -e XDG_CONFIG_HOME=${DOCKERHOME}/.config \
     -e PYTHONPATH=${PACKAGE_ROOT} \
-    -v $$(pwd)/editor/nvim:${DOCKERHOME}/.config/nvim
+    -v $$(pwd)/editor/nvim:${DOCKERHOME}/.config/nvim:delegated
 JUPYTERENV= -e JUPYTER_CONFIG_DIR=${DOCKERHOME}/.jupyter \
 	    -e JUPYTERLAB_DIR=${DOCKERHOME}/.local/share/jupyter/lab
 

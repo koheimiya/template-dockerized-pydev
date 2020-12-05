@@ -21,6 +21,11 @@ Plug 'prabirshrestha/asyncomplete-lsp.vim'
 call plug#end()
 "" Plug manager ---- end
 
+"" Keybindings ---- begin
+nmap K :LspHover<CR>
+nmap gd :LspDefinition<CR>
+"" Keybindings ---- end
+
 "" Fugitive ---- begin
 nmap [figitive] <Nop>
 map <Leader>g [figitive]

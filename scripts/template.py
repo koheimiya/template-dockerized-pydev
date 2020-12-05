@@ -12,7 +12,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    mymodule.greeting(args.name)
+    mymodule.greetings(args.name)
 
 
 if __name__ == '__main__':

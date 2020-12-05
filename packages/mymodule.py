@@ -1,4 +1,4 @@
 
 
-def greeting(name: str) -> None:
+def greetings(name: str) -> None:
     print(f'Hello {name}.')
