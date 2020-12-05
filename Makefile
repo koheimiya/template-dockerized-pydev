@@ -9,7 +9,7 @@ RUN=docker run \
     -e HOME=${DOCKERHOME} -v ${DOCKERHOME}:${DOCKERHOME} \
     -e XDG_CONFIG_HOME=${DOCKERHOME}/.config \
     -e PYTHONPATH=${PACKAGE_ROOT} \
-    -v $$(pwd)/editor/nvim:${DOCKERHOME}/.config/nvim:ro
+    -v $$(pwd)/editor/nvim:${DOCKERHOME}/.config/nvim
 JUPYTERENV= -e JUPYTER_CONFIG_DIR=${DOCKERHOME}/.jupyter \
 	    -e JUPYTERLAB_DIR=${DOCKERHOME}/.local/share/jupyter/lab
 

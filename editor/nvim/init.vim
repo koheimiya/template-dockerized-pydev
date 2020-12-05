@@ -13,12 +13,13 @@ Plug 'airblade/vim-gitgutter'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'tomasr/molokai'
+" Language server
+Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
 call plug#end()
 "" Plug manager ---- end
-
-"" Deoplete ---- begin
-let g:deoplete#enable_at_startup = 1
-"" Deoplete ---- end
 
 "" Fugitive ---- begin
 nmap [figitive] <Nop>
@@ -41,23 +42,9 @@ function! AdjustWindowHeight(minheight, maxheight)
 endfunction
 "" QuickFix ---- end
 
-"" haskell-vim ---- begin
-let g:haskell_indent_disable = 1
-let g:haskell_classic_highlighting = 1  " haskell-vim
-let g:haskell_enable_quantification = 1
-let g:haskell_enable_recursivedo = 1
-let g:haskell_enable_arrowsyntax = 1
-let g:haskell_enable_pattern_synonyms = 1
-let g:haskell_enable_typeroles = 1
-let g:haskell_enable_static_pointers = 1
-let g:haskell_backpack = 1                " to enable highlighting of backpack keywords
-"" haskell-vim ---- end
-
-""
 " override the defaults for a particular FileType
 autocmd FileType rust
             \ let b:AutoClosePairs = AutoClose#ParsePairs("() [] {} ` \" '")
-""
 
 "" nerdtree ---- begin
 " Auto open when specifying directory
@@ -65,26 +52,12 @@ autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
 "" nerdtree ---- end
 
-"" LanguageClinet ---- begin
-set hidden
-let g:LanguageClient_serverCommands = {
-    \ 'haskell': ['hie', '--lsp'],
-    \ 'python': ['pyls'],
-    \ 'rust': ['rls'],
-    \ }
-let g:LanguageClient_autoStart = 1
-nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
-nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
-"" LanguageClinet ---- end
-
 "" Airline ---- begin
-" let g:airline_theme='papercolor'
-" let g:airline_theme='solarized'
 let g:airline#extensions#tabline#enabled = 1
 "" Airline ---- end
 
 "" Default ---- begin
+set hidden
 set tabstop=8
 set autoindent
 set expandtab
@@ -121,6 +94,5 @@ set background=dark
 " set background=light
 set t_Co=256
 filetype indent plugin on
-
 
 "" Default ---- end
