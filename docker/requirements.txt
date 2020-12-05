@@ -1,0 +1,3 @@
+pyls[all]
+mypy
+pytest
