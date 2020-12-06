@@ -21,6 +21,29 @@ Plug 'prabirshrestha/asyncomplete-lsp.vim'
 call plug#end()
 "" Plug manager ---- end
 
+" if (executable('pyls'))
+"     let s:pyls_config = {'pyls': {'plugins': {
+"         \   'pycodestyle': {'enabled': v:true},
+"         \   'pydocstyle': {'enabled': v:false},
+"         \   'pylint': {'enabled': v:false},
+"         \   'flake8': {'enabled': v:true},
+"         \   'jedi_definition': {
+"         \     'follow_imports': v:true,
+"         \     'follow_builtin_imports': v:true,
+"         \   },
+"         \ }}}
+"     " pylsの起動定義
+"     augroup LspPython
+"         autocmd!
+"         autocmd User lsp_setup call lsp#register_server({
+"             \ 'name': 'pyls',
+"             \ 'cmd': { server_info -> ['python', '-m', 'pyls'] },
+"             \ 'whitelist': ['python'],
+"             \ 'workspace_config': s:pyls_config
+"             \})
+"     augroup END
+" endif
+
 "" Keybindings ---- begin
 nmap K :LspHover<CR>
 nmap gd :LspDefinition<CR>
@@ -92,8 +115,11 @@ tnoremap <silent> <C-[> <C-\><C-n>
 let mapleader = "\<Space>"
 
 syntax enable
-" colorscheme zellner
-colorscheme molokai
+try
+    colorscheme molokai
+catch /^Vim\%((\a\+)\)\=:E185/
+    colorscheme zellner
+endtry
 " set termguicolors
 set background=dark
 " set background=light

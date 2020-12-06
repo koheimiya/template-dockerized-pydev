@@ -3,7 +3,7 @@ import argparse
 import mymodule
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument('-name', default='World', help='your name')
     args = parser.parse_args()

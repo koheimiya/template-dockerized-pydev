@@ -1,36 +1,39 @@
 .PHONY: all clean build rebuild jupyter check test edit env
 SHELL=/bin/bash
 ID=$$(cat ID)
-DOCKERHOME=${CURDIR}/.dockerhome
+HOMESRC=${CURDIR}/.dockerhome
+HOMEDST=/dockerhome
 IMAGE=$$(cat IMAGE)
-PACKAGE_ROOT=packages
+PACKAGE_ROOT=${CURDIR}/packages
 RUN=docker run \
     --rm --init -u $$(id -u):$$(id -g) -w $$(pwd) -v $$(pwd):$$(pwd):delegated \
-    -e HOME=${DOCKERHOME} -v ${DOCKERHOME}:${DOCKERHOME} \
-    -e XDG_CONFIG_HOME=${DOCKERHOME}/.config \
+    -e HOME=${HOMEDST} \
+    -e XDG_CONFIG_HOME=${HOMEDST}/.config \
     -e PYTHONPATH=${PACKAGE_ROOT} \
-    -v $$(pwd)/editor/nvim:${DOCKERHOME}/.config/nvim:delegated
-JUPYTERENV= -e JUPYTER_CONFIG_DIR=${DOCKERHOME}/.jupyter \
-	    -e JUPYTERLAB_DIR=${DOCKERHOME}/.local/share/jupyter/lab
+    -v $$(pwd)/docker/editor/nvim:${HOMEDST}/.config/nvim:delegated
+JUPYTERENV= -e JUPYTER_CONFIG_DIR=${HOMEDST}/.jupyter \
+	    -e JUPYTERLAB_DIR=${HOMEDST}/.local/share/jupyter/lab
 
-all: build ${DOCKERHOME}
+all: build ${HOMESRC}
 
 
 clean:
 	docker image rm ${IMAGE}
-	rm -f .build
-	rm -rf ${DOCKERHOME}
+	rm -rf ${HOMESRC}
 
 build:
-	docker build ${BUILD_OPTION} -t ${IMAGE} -f ./docker/Dockerfile ./docker/
+	docker build ${BUILD_OPTION} -t ${IMAGE} -f ./docker/Dockerfile \
+	    --build-arg HOME=${HOMEDST} \
+	    --build-arg USER=$$(id -u) \
+	    --build-arg GROUP=$$(id -g) \
+	    ./docker/
 
 rebuild:
-	rm -f .build
 	make .build BUILD_OPTION="--no-cache --pull"
 
 
-${DOCKERHOME}:
-	mkdir ${DOCKERHOME}
+${HOMESRC}:
+	mkdir ${HOMESRC}
 
 
 jupyter: .jupyter/jupyter_notebook_config.py .local/share/jupyter/lab
@@ -38,11 +41,11 @@ jupyter: .jupyter/jupyter_notebook_config.py .local/share/jupyter/lab
 	${RUN} -it -p ${PORT}:${PORT} --name notebook.${ID} ${JUPYTERENV} ${IMAGE} \
 	    jupyter lab --port=${PORT} --no-browser --ip=0.0.0.0
 
-${DOCKERHOME}/.jupyter/jupyter_notebook_config.py:
+${HOMESRC}/.jupyter/jupyter_notebook_config.py:
 	${RUN} -it ${JUPYTERENV} ${IMAGE} \
 	    jupyter notebook --generate-config
 
-${DOCKERHOME}/.local/share/jupyter/lab:
+${HOMESRC}/.local/share/jupyter/lab:
 	${RUN} -it ${JUPYTERENV} ${IMAGE} \
 	    jupyter lab build
 
@@ -55,12 +58,12 @@ test: check
 	${RUN} -it ${IMAGE} pytest ${PACKAGE_ROOT} $(OPTION)
 
 
-edit: .install.plug
+edit:
 	${RUN} -it ${IMAGE} nvim .
 
-.install.plug:
-	${RUN} -it ${IMAGE} sh -c 'curl -fLo "$${XDG_DATA_HOME:-$$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-	@touch $@
+# .install.plug:
+# 	${RUN} -it ${IMAGE} sh -c 'curl -fLo "$${XDG_DATA_HOME:-$$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+# 	@touch $@
 
 env:
 	${RUN} -it ${IMAGE} bash

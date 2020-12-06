@@ -26,3 +26,15 @@ RUN conda install pytorch cpuonly -c pytorch -y
 # Install dependencies via pip
 COPY requirements.txt /tmp/
 RUN pip install -r /tmp/requirements.txt
+
+WORKDIR /tmp
+ARG HOME 
+ARG USER
+ARG GROUP
+USER $USER:$GROUP
+ENV HOME $HOME
+COPY editor/nvim $HOME/.config/nvim
+RUN sh -c 'curl -fLo "$HOME"/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+RUN nvim --headless +PlugInstall +qall
+# RUN chmod -R a+rwx $HOME
+VOLUME $HOME
