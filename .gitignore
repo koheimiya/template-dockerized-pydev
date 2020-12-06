@@ -1,4 +1,4 @@
 .ipynb_checkpoints/
 __pycache__/
-/.dockerhome/
-/.install.plug
+.mypy_cache/
+.pytest_cache/
