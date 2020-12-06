@@ -35,9 +35,10 @@ ARG GROUP
 COPY editor /editor
 RUN chmod -R a+r /editor
 RUN mkdir $HOME && chmod -R a+rwx $HOME
-
 USER $USER:$GROUP
 WORKDIR $HOME
+
+# Set up editor
 RUN mkdir .config && cp -r /editor/nvim $HOME/.config/nvim
 RUN curl -fLo $HOME/.local/share/nvim/site/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -45,5 +46,14 @@ RUN nvim --headless +PlugUpdate +qall
 RUN python -m venv .pyls-venv && . ./.pyls-venv/bin/activate && pip install -U pip && pip install python-language-server[all] && \
         mkdir -p $HOME/.local/bin && ln -s $HOME/.pyls-venv/bin/pyls $HOME/.local/bin/pyls
 ENV PATH $HOME/.local/bin:$PATH
+
+# Jupyter
+ARG JUPYTER_CONFIG_DIR
+ARG JUPYTERLAB_DIR
+ENV JUPYTER_CONFIG_DIR $JUPYTER_CONFIG_DIR
+ENV JUPYTERLAB_DIR $JUPYTERLAB_DIR
+RUN jupyter lab build
+
+# Finalize
 VOLUME $HOME
 ENV HOME $HOME
