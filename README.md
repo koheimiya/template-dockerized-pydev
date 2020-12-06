@@ -4,5 +4,6 @@
 
 # Getting Started
 * `make` for the initial installation.
-* `./run scripts/template.py` to run sample script.
-* `make jupyter` to open up JupyterLab. It will take a while for the first time.
+* `make env CMD="scripts/template.py -n world"` to run sample script.
+* `make edit` for developing.
+* `make jupyter PORT=8888` to launch JupyterLab.

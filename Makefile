@@ -1,5 +1,6 @@
 .PHONY: all clean build rebuild jupyter build-jupyter check test edit env
 SHELL=/bin/bash
+CMD ?= /bin/bash -i
 ID=$$(cat ID)
 DOCKERHOME=/dockerhome
 IMAGE=$$(cat IMAGE)
@@ -46,4 +47,4 @@ edit:
 	${RUN} -it ${IMAGE} nvim .
 
 env:
-	${RUN} -it ${IMAGE} bash
+	${RUN} -it ${IMAGE} ${CMD}
