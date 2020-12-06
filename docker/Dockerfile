@@ -22,19 +22,28 @@ RUN apt install -y nodejs
 
 # Install dependencies via conda
 RUN conda install pytorch cpuonly -c pytorch -y
+RUN conda install neovim -c conda-forge -y
 
 # Install dependencies via pip
 COPY requirements.txt /tmp/
 RUN pip install -r /tmp/requirements.txt
 
-WORKDIR /tmp
+# Post processing
 ARG HOME 
 ARG USER
 ARG GROUP
+COPY editor /editor
+RUN chmod -R a+r /editor
+RUN mkdir $HOME && chmod -R a+rwx $HOME
+
 USER $USER:$GROUP
-ENV HOME $HOME
-COPY editor/nvim $HOME/.config/nvim
-RUN sh -c 'curl -fLo "$HOME"/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-RUN nvim --headless +PlugInstall +qall
-# RUN chmod -R a+rwx $HOME
+WORKDIR $HOME
+RUN mkdir .config && cp -r /editor/nvim $HOME/.config/nvim
+RUN curl -fLo $HOME/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+RUN nvim --headless +PlugUpdate +qall
+RUN python -m venv .pyls-venv && . ./.pyls-venv/bin/activate && pip install -U pip && pip install python-language-server[all] && \
+        mkdir -p $HOME/.local/bin && ln -s $HOME/.pyls-venv/bin/pyls $HOME/.local/bin/pyls
+ENV PATH $HOME/.local/bin:$PATH
 VOLUME $HOME
+ENV HOME $HOME

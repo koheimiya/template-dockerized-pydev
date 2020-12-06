@@ -1,3 +1,2 @@
-# python-language-server[all]
-# mypy
+mypy
 pytest

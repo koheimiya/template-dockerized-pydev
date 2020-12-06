@@ -15,34 +15,34 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'tomasr/molokai'
 " Language server
 Plug 'prabirshrestha/vim-lsp'
-Plug 'mattn/vim-lsp-settings'
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
 call plug#end()
 "" Plug manager ---- end
 
-" if (executable('pyls'))
-"     let s:pyls_config = {'pyls': {'plugins': {
-"         \   'pycodestyle': {'enabled': v:true},
-"         \   'pydocstyle': {'enabled': v:false},
-"         \   'pylint': {'enabled': v:false},
-"         \   'flake8': {'enabled': v:true},
-"         \   'jedi_definition': {
-"         \     'follow_imports': v:true,
-"         \     'follow_builtin_imports': v:true,
-"         \   },
-"         \ }}}
-"     " pylsの起動定義
-"     augroup LspPython
-"         autocmd!
-"         autocmd User lsp_setup call lsp#register_server({
-"             \ 'name': 'pyls',
-"             \ 'cmd': { server_info -> ['python', '-m', 'pyls'] },
-"             \ 'whitelist': ['python'],
-"             \ 'workspace_config': s:pyls_config
-"             \})
-"     augroup END
-" endif
+if (executable('pyls'))
+    let s:pyls_config = {'pyls': {'plugins': {
+        \   'pycodestyle': {'enabled': v:true},
+        \   'pydocstyle': {'enabled': v:false},
+        \   'pylint': {'enabled': v:false},
+        \   'flake8': {'enabled': v:true},
+        \   'mypy': {'enabled': v:true},
+        \   'jedi_definition': {
+        \     'follow_imports': v:true,
+        \     'follow_builtin_imports': v:true,
+        \   },
+        \ }}}
+    " pylsの起動定義
+    augroup LspPython
+        autocmd!
+        autocmd User lsp_setup call lsp#register_server({
+            \ 'name': 'pyls',
+            \ 'cmd': { server_info -> ['pyls'] },
+            \ 'whitelist': ['python'],
+            \ 'workspace_config': s:pyls_config
+            \})
+    augroup END
+endif
 
 "" Keybindings ---- begin
 nmap K :LspHover<CR>
