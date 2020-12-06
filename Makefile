@@ -13,7 +13,7 @@ RUN=docker run \
 JUPYTERENV= -e JUPYTER_CONFIG_DIR=${DOCKERHOME}/.jupyter \
 	    -e JUPYTERLAB_DIR=${DOCKERHOME}/.local/share/jupyter/lab
 
-all: .build ${DOCKERHOME}
+all: build ${DOCKERHOME}
 
 
 clean:
