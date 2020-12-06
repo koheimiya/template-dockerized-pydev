@@ -28,7 +28,7 @@ RUN conda install neovim -c conda-forge -y
 COPY requirements.txt /tmp/
 RUN pip install -r /tmp/requirements.txt
 
-# Post processing
+# COPY rest of the contexts and switch to user
 ARG HOME 
 ARG USER
 ARG GROUP
