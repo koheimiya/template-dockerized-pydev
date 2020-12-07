@@ -18,7 +18,7 @@ clean:
 	docker volume rm ${VOLUME}
 
 build:
-	docker build ${BUILD_OPTION} -t ${IMAGE} -f ./docker/simple.Dockerfile \
+	docker build ${BUILD_OPTION} -t ${IMAGE} -f ./docker/Dockerfile \
 	    --build-arg USERNAME=${DOCKERUSERNAME} \
 	    --build-arg USER=$$(id -u) \
 	    --build-arg GROUP=$$(id -g) \
