@@ -1,18 +1,12 @@
 #!/usr/bin/env python3
-import argparse
+import click
 import mymodule
 
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-name', default='World', help='your name')
-    args = parser.parse_args()
-    return args
-
-
-def main():
-    args = parse_args()
-    mymodule.greetings(args.name)
+@click.command()
+@click.option('-name', default='World', help='your name')
+def main(name: str):
+    mymodule.greetings(name)
 
 
 if __name__ == '__main__':

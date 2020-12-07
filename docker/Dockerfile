@@ -16,6 +16,7 @@ RUN apt-get -y install neovim wget curl git
 RUN pip3 install mypy pytest
 RUN pip3 install jupyter click numpy matplotlib seaborn pandas tqdm
 RUN pip3 install torch torchvision
+RUN pip3 install python-language-server[all]
 
 COPY editor /editor
 RUN chmod -R a+r /editor
@@ -33,9 +34,9 @@ RUN mkdir .config && cp -r /editor/nvim $HOME/.config/nvim
 RUN curl -fLo $HOME/.local/share/nvim/site/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 RUN nvim --headless +PlugUpdate +qall
-RUN python3 -m venv .pyls-venv && . ./.pyls-venv/bin/activate && pip install -U pip && pip install python-language-server[all] && \
-        mkdir -p $HOME/.local/bin && ln -s $HOME/.pyls-venv/bin/pyls $HOME/.local/bin/pyls
-ENV PATH $HOME/.local/bin:$PATH
+# RUN python3 -m venv .pyls-venv && . ./.pyls-venv/bin/activate && pip install -U pip && pip install python-language-server[all] && \
+#         mkdir -p $HOME/.local/bin && ln -s $HOME/.pyls-venv/bin/pyls $HOME/.local/bin/pyls
+# ENV PATH $HOME/.local/bin:$PATH
 
 # Finalize
 VOLUME $HOME

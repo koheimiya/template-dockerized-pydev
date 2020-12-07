@@ -7,10 +7,10 @@ DOCKERHOME=/home/${DOCKERUSERNAME}
 IMAGE=$$(cat IMAGE)
 VOLUME=vol.${ID}
 PACKAGE_ROOT=${CURDIR}/packages
+GPUENV = --gpus all -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all
 RUN=docker run \
     --rm --init -u ${DOCKERUSERNAME} -w $$(pwd) -v $$(pwd):$$(pwd):delegated \
-    -e PYTHONPATH=${PACKAGE_ROOT} --mount source=${VOLUME},target=${DOCKERHOME} ${RUN_OPTION}
-GPUENV = --gpus all -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all
+    -e PYTHONPATH=${PACKAGE_ROOT} --mount source=${VOLUME},target=${DOCKERHOME} ${GPUENV}
 
 all: build
 
@@ -30,16 +30,10 @@ rebuild:
 env:
 	${RUN} -it ${IMAGE} ${CMD}
 
-env-gpu:
-	make env RUN_OPTION="${GPUENV}"
-
 jupyter:
 	@test $(PORT) || (echo Need PORT variable set. && exit 1)
 	${RUN} -it -p ${PORT}:${PORT} --name notebook.${ID} ${JUPYTERENV} ${IMAGE} \
 	    jupyter notebook --port=${PORT} --no-browser --ip=0.0.0.0
-
-jupyter-gpu:
-	make jupyter PORT=${PORT} RUN_OPTION="${GPUENV}"
 
 check:
 	${RUN} -it ${IMAGE} mypy ${PACKAGE_ROOT} scripts
@@ -49,3 +43,6 @@ test: check
 
 edit:
 	${RUN} -it ${IMAGE} nvim .
+
+edit-check:
+	mypy scripts packages
