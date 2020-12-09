@@ -1,13 +1,13 @@
 .PHONY: all clean build rebuild env env-gpu jupyter jupyter-gpu check test edit
 SHELL=/bin/bash
 CMD ?= /bin/bash -i
-ID=$$(cat ID)
+ID=$$(cat config/ID)
 DOCKERUSERNAME=makefileuser
 DOCKERHOME=/home/${DOCKERUSERNAME}
-IMAGE=$$(cat IMAGE)
+IMAGE=$$(cat config/IMAGE)
 VOLUME=vol.${ID}
 PACKAGE_ROOT=${CURDIR}/packages
-GPUENV = --gpus all -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all
+GPUENV = $$(cat config/GPUENV 2> /dev/null)
 RUN=docker run \
     --rm --init -u ${DOCKERUSERNAME} -w $$(pwd) -v $$(pwd):$$(pwd):delegated \
     -e PYTHONPATH=${PACKAGE_ROOT} --mount source=${VOLUME},target=${DOCKERHOME} ${GPUENV}
