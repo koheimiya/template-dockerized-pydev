@@ -1,13 +1,14 @@
 .PHONY: all clean build rebuild env env-gpu jupyter jupyter-gpu check test edit
 SHELL=/bin/bash
 CMD ?= /bin/bash -i
-ID=$$(cat ID)
+PROJECT_ROOT=$$(pwd)
+ID=$$(cat config/ID)
+IMAGE=$$(cat config/IMAGE)
 DOCKERUSERNAME=makefileuser
 DOCKERHOME=/home/${DOCKERUSERNAME}
-IMAGE=$$(cat IMAGE)
 VOLUME=vol.${ID}
-PACKAGE_ROOT=${CURDIR}/packages
-GPUENV = --gpus all -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all
+PACKAGE_ROOT=${PROJECT_ROOT}/packages
+GPUENV = $$(cat config/GPUENV 2> /dev/null)
 RUN=docker run \
     --rm --init -u ${DOCKERUSERNAME} -w $$(pwd) -v $$(pwd):$$(pwd):delegated \
     -e PYTHONPATH=${PACKAGE_ROOT} --mount source=${VOLUME},target=${DOCKERHOME} ${GPUENV}
@@ -31,9 +32,9 @@ env:
 	${RUN} -it ${IMAGE} ${CMD}
 
 jupyter:
-	@test $(PORT) || (echo Need PORT variable set. && exit 1)
+	@test $(PORT) || (echo '[Need PORT variable set.]' && exit 1)
 	${RUN} -it -p ${PORT}:${PORT} --name notebook.${ID} ${JUPYTERENV} ${IMAGE} \
-	    jupyter notebook --port=${PORT} --no-browser --ip=0.0.0.0
+	    jupyter lab --port=${PORT} --no-browser --ip=0.0.0.0
 
 check:
 	${RUN} -it ${IMAGE} mypy ${PACKAGE_ROOT} scripts
@@ -46,3 +47,7 @@ edit:
 
 edit-check:
 	mypy scripts packages
+
+diagram:
+	mkdir -p assets
+	${RUN} -it ${IMAGE} sh -c "cd assets && pyreverse --ignore=test -o png dvae"
